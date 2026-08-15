@@ -95,6 +95,33 @@
         {"nodeId":"pierce","displayName":"Pierce","rarity":"Hero","percent":2,"featured":false},
         {"nodeId":"overdrive_exe","displayName":"Overdrive.EXE","rarity":"Legendary","percent":4,"featured":true}
       ]
+    },
+    {
+      "bannerId": "friendship",
+      "bannerType": "Friendship",
+      "currency": "FriendshipPoint",
+      "singleCost": 100,
+      "tenCost": 900,
+      "availableFromUnixSeconds": 0,
+      "availableUntilUnixSeconds": 0,
+      "rarePityThreshold": 0,
+      "heroPityThreshold": 0,
+      "legendaryPityThreshold": 0,
+      "firstTenHeroGuarantee": false,
+      "tenPullDuplicateCap": 3,
+      "items": [
+        {"nodeId":"focus","displayName":"Focus","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"pulse","displayName":"Pulse","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"relay","displayName":"Relay","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"slow","displayName":"Slow","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"stream","displayName":"Stream","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"wire","displayName":"Wire","rarity":"Common","percent":14.16666667,"featured":false},
+        {"nodeId":"burst","displayName":"Burst","rarity":"Rare","percent":3,"featured":false},
+        {"nodeId":"chain","displayName":"Chain","rarity":"Rare","percent":3,"featured":false},
+        {"nodeId":"charge","displayName":"Charge","rarity":"Rare","percent":3,"featured":false},
+        {"nodeId":"regulator","displayName":"Regulator","rarity":"Rare","percent":3,"featured":false},
+        {"nodeId":"splitter","displayName":"Splitter","rarity":"Rare","percent":3,"featured":false}
+      ]
     }
   ]
 }
