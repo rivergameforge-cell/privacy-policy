@@ -1,0 +1,38 @@
+# 또 보스냐! 플레이 리포트
+
+Google Analytics 4 Data API를 브라우저에서 직접 읽는 정적 대시보드입니다. HTML·CSS·JavaScript만 사용하고 실행 서버나 별도의 분석 데이터 저장소가 없습니다.
+
+## 현재 상태
+
+로컬 페이지와 Google OAuth 연결 코드는 준비돼 있습니다. **Google Cloud의 실제 웹 OAuth 클라이언트와 최종 배포 주소는 아직 설정·검증하지 않았습니다.** `561781670`은 현재 게임의 Analytics 속성 ID입니다. 실제 서비스 전송은 이 기능이 포함된 앱 빌드가 설치된 이후부터 시작합니다.
+
+## 로컬 실행
+
+```sh
+cd analytics-dashboard
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+저장소에 `admin/` 경로로 배포한 뒤에는 위 `cd analytics-dashboard` 대신 `cd admin`를 사용합니다. 브라우저에서 `http://127.0.0.1:8765/`를 엽니다. 로그인 전에는 실제 값이나 예시 값을 표시하지 않습니다.
+
+## 연결 구성
+
+1. 게임의 기존 Google Cloud 프로젝트에서 **Google Analytics Data API** 사용 설정을 확인합니다.
+2. Google Auth 플랫폼의 OAuth 동의 화면과 웹 애플리케이션 클라이언트가 필요합니다. 허용된 JavaScript 출처에 실제 GitHub Pages의 **origin** (`https://계정명.github.io`, 경로 제외)을 등록합니다. 로컬 검증에는 `http://127.0.0.1:8765`도 별도로 등록합니다.
+3. 페이지의 ⚙ 버튼에서 OAuth 클라이언트 ID와 Analytics 속성 ID를 입력한 뒤 Google로 연결합니다. 계정에는 해당 Analytics 속성의 읽기 권한이 필요합니다. 테스트 상태의 OAuth 앱은 허용된 테스트 사용자만 접근할 수 있습니다.
+4. 필요한 권한은 `https://www.googleapis.com/auth/analytics.readonly`뿐입니다. 권한 동의 화면에서 앱과 범위를 확인해야 합니다. 프로젝트·OAuth 화면 생성이나 권한 부여에 추가 동의 또는 서비스 약관이 나오면 사용자 승인 후 진행해야 합니다.
+
+기존 Google Cloud 설정 변경, API 활성화, OAuth 클라이언트 생성 및 실제 사용자 승인 여부는 별도로 확인해야 합니다. 클라이언트 ID는 비밀키가 아니지만 **클라이언트 보안 비밀번호, 서비스 계정 키, 액세스 토큰, 게임 통계 원문은 저장소나 웹페이지에 넣지 않습니다.** 토큰은 브라우저 메모리에서만 사용하고 연결 끊기나 새로고침 후 제거합니다.
+
+Google 권고는 서버 기반 인증 코드 방식이지만, 이 페이지는 정적 호스팅이라는 요구에 맞춰 Google Identity Services의 브라우저 토큰 방식을 사용합니다. 페이지 코드를 호스팅하는 저장소의 쓰기 권한을 신뢰할 수 있는 사람에게만 부여해야 합니다. [Google 인증 방식](https://developers.google.com/identity/oauth2/web/guides/choose-authorization-model)
+
+## 지표 해석
+
+- 날짜 및 국가 필터는 활성 사용자, 보스 결과, 광고, 퍼널과 행동 분석에 적용합니다. **코호트 재방문은 전체 국가 기준**이며 첫 방문 시점은 35일 전부터 8일 전까지입니다.
+- 퍼널은 신규 사용자의 첫 실행 → 게임 진입 → 튜토리얼 시작 → 보스 도전 → 보스 처치를 순서대로 계산합니다. 튜토리얼을 건너뛰면 뒤 단계에 포함되지 않을 수 있고 보스 종류·지역을 특정하지 않습니다. Google의 v1alpha 퍼널 API는 변경될 수 있습니다.
+- 보스 승률은 저장된 `boss_result`의 승리/전체 결과이며, 미완료 전투는 포함하지 않습니다. 광고 획득 콜백과 게임 저장 성공은 다릅니다. 데이터 처리 지연, 비활성화된 분석 설정, GA 임계값, 표본 추출, 등록된 측정기준 상태에 따라 일부 항목이 지연되거나 비어 있을 수 있습니다.
+- 각 섹션 실패는 따로 표시합니다. 실제 Analytics 접근 및 데이터 집계와의 비교 검증은 OAuth 설정 후 필요합니다.
+
+## GitHub Pages
+
+기존 게임 저장소는 비공개입니다. 공개 페이지가 필요하면 대시보드 파일만 별도의 공개 저장소에 올립니다. Pages의 브랜치 배포도 GitHub Actions가 실행되므로 프로젝트의 `git-zero-cost` 규칙에 따라 명시적 예외 확인이 필요합니다. [GitHub Pages 동작](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) · [Actions 과금](https://docs.github.com/en/actions/concepts/billing-and-usage)
