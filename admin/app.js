@@ -1,5 +1,6 @@
 "use strict";
 // All report data and the access token remain in memory. No game or user IDs are stored.
+const DEFAULT_CLIENT_ID = "755808518263-cbhrcuhubp42g1s71i1dgm7kr1aav27c.apps.googleusercontent.com";
 const SCOPE = "https://www.googleapis.com/auth/analytics.readonly";
 const ENDPOINT = "https://analyticsdata.googleapis.com";
 const number = new Intl.NumberFormat("ko-KR");
@@ -11,6 +12,7 @@ const state = {
   controller: null,
   expiryTimer: null,
   quality: new Set(),
+  reportTimeZone: "UTC",
   config: readConfig(),
 };
 const funnelSteps = [
@@ -58,11 +60,11 @@ function readConfig() {
       localStorage.getItem("ubr-dashboard-settings") || "{}",
     );
     return {
-      clientId: typeof c.clientId === "string" ? c.clientId : "",
+      clientId: typeof c.clientId === "string" && /^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(c.clientId) ? c.clientId : DEFAULT_CLIENT_ID,
       propertyId: /^\d+$/.test(c.propertyId || "") ? c.propertyId : "561781670",
     };
   } catch {
-    return { clientId: "", propertyId: "561781670" };
+    return { clientId: DEFAULT_CLIENT_ID, propertyId: "561781670" };
   }
 }
 function notify(msg) {
@@ -95,6 +97,7 @@ function errorText(error) {
   if (error.status === 401) return "인증이 만료되었습니다. 다시 연결해 주세요.";
   if (error.status === 403)
     return "API 사용 설정 또는 이 계정의 Analytics 접근 권한을 확인해 주세요.";
+  if (error.status === 400) return `조회 설정 확인 필요: ${error.message}`;
   if (error.status === 429)
     return "요청 한도에 도달했습니다. 잠시 후 다시 시도해 주세요.";
   return "이 항목을 불러오지 못했습니다. API 설정과 맞춤 측정항목을 확인해 주세요.";
@@ -260,6 +263,7 @@ async function loadSummary() {
     "runReport",
     requestBody([], ["activeUsers", "newUsers"], countryFilter()),
   );
+  state.reportTimeZone = d.metadata?.timeZone || "UTC";
   const r = rows(d);
   $("active-users").textContent = r.length ? number.format(r[0].m[0]) : "—";
   $("new-users").textContent = r.length ? number.format(r[0].m[1]) : "—";
@@ -407,6 +411,15 @@ async function loadTrend() {
     n.append(bar);
   }
 }
+function propertyDateDaysAgo(days, now = new Date()) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: state.reportTimeZone,
+      year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(now).filter((p) => p.type !== "literal").map((p) => [p.type, p.value]),
+  );
+  return new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day) - days)).toISOString().slice(0, 10);
+}
 async function loadRetention() {
   const body = {
     dimensions: [{ name: "cohort" }, { name: "cohortNthDay" }],
@@ -416,7 +429,7 @@ async function loadRetention() {
         {
           name: "최근 신규 사용자",
           dimension: "firstSessionDate",
-          dateRange: { startDate: "35daysAgo", endDate: "8daysAgo" },
+          dateRange: { startDate: propertyDateDaysAgo(35), endDate: propertyDateDaysAgo(8) },
         },
       ],
       cohortsRange: { endOffset: 7, granularity: "DAILY" },
@@ -527,6 +540,7 @@ function connect() {
   const client = google.accounts.oauth2.initTokenClient({
     client_id: state.config.clientId,
     scope: SCOPE,
+    login_hint: "v8redline.studio@gmail.com",
     callback: (response) => {
       if (response.error || !response.access_token) {
         notify("Google 연결이 취소되었거나 실패했습니다.");

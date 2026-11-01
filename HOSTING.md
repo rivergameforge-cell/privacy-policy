@@ -27,6 +27,6 @@ Spark 무료 한도는 저장 10 GB, 전송 360 MB/일입니다. 한도 초과 �
 
 ## 이전 후 확인 범위
 
-Google Analytics OAuth 클라이언트 설정과 실데이터 로그인은 별도 미완료입니다. 새 출처 `https://v8redline-studio.web.app`를 등록해야 합니다. 분석 권한은 Google Analytics가 검증하고 토큰은 메모리에만 둡니다.
+Google Analytics OAuth 클라이언트 설정과 V8REDLINE 실데이터 로그인을 검증했습니다. 로그인 전용 Cloud 프로젝트는 `v8redline-analytics-web`이며 허용 출처는 `https://v8redline-studio.web.app`입니다. 외부 테스트 사용자에는 V8REDLINE 계정만 등록했고 권한은 analytics.readonly입니다. 분석 권한은 Google Analytics가 검증하고 토큰은 메모리에만 둡니다.
 
 기존 GitHub Pages 주소는 앱·스토어에 남아 있는 링크를 위해 유지합니다. 이번 변경을 배포하는 소스 브랜치에는 Pages 빌드를 실행하지 않습니다. 기존 호스팅 종료와 게임·스토어의 모든 URL 교체는 별도 전환 작업입니다.
