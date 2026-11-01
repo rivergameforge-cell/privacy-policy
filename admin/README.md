@@ -4,7 +4,7 @@ Google Analytics 4 Data API를 브라우저에서 직접 읽는 정적 대시보
 
 ## 현재 상태
 
-로컬 페이지와 Google OAuth 연결 코드는 준비돼 있습니다. **Google Cloud의 실제 웹 OAuth 클라이언트와 최종 배포 주소는 아직 설정·검증하지 않았습니다.** `561781670`은 현재 게임의 Analytics 속성 ID입니다. 실제 서비스 전송은 이 기능이 포함된 앱 빌드가 설치된 이후부터 시작합니다.
+로컬 페이지와 Google OAuth 연결 코드는 준비돼 있습니다. **Google Cloud의 실제 웹 OAuth 클라이언트는 아직 설정·검증하지 않았습니다. 배포 주소는 https://v8redline-studio.web.app/admin/ 입니다.** `561781670`은 현재 게임의 Analytics 속성 ID입니다. 실제 서비스 전송은 이 기능이 포함된 앱 빌드가 설치된 이후부터 시작합니다.
 
 ## 로컬 실행
 
@@ -18,7 +18,7 @@ python3 -m http.server 8765 --bind 127.0.0.1
 ## 연결 구성
 
 1. 게임의 기존 Google Cloud 프로젝트에서 **Google Analytics Data API** 사용 설정을 확인합니다.
-2. Google Auth 플랫폼의 OAuth 동의 화면과 웹 애플리케이션 클라이언트가 필요합니다. 허용된 JavaScript 출처에 실제 GitHub Pages의 **origin** (`https://계정명.github.io`, 경로 제외)을 등록합니다. 로컬 검증에는 `http://127.0.0.1:8765`도 별도로 등록합니다.
+2. Google Auth 플랫폼의 OAuth 동의 화면과 웹 애플리케이션 클라이언트가 필요합니다. 허용된 JavaScript 출처에 Firebase Hosting의 **origin** (`https://v8redline-studio.web.app`, 경로 제외)을 등록합니다. 로컬 검증에는 `http://127.0.0.1:8765`도 별도로 등록합니다.
 3. 페이지의 ⚙ 버튼에서 OAuth 클라이언트 ID와 Analytics 속성 ID를 입력한 뒤 Google로 연결합니다. 계정에는 해당 Analytics 속성의 읽기 권한이 필요합니다. 테스트 상태의 OAuth 앱은 허용된 테스트 사용자만 접근할 수 있습니다.
 4. 필요한 권한은 `https://www.googleapis.com/auth/analytics.readonly`뿐입니다. 권한 동의 화면에서 앱과 범위를 확인해야 합니다. 프로젝트·OAuth 화면 생성이나 권한 부여에 추가 동의 또는 서비스 약관이 나오면 사용자 승인 후 진행해야 합니다.
 
@@ -28,7 +28,7 @@ Google 권고는 서버 기반 인증 코드 방식이지만, 이 페이지는 �
 
 ## 로그인 전 화면과 데이터 보호
 
-로그인 전에는 분석 항목을 숨기고 로그인 안내만 보여 줍니다. Google에서 액세스 토큰을 발급하더라도 속성 요약 조회가 성공해야 화면이 열리고, 권한 오류·연결 해제·토큰 만료 시 다시 숨깁니다. 토큰은 메모리에만 보관합니다. GitHub Pages의 HTML·JavaScript 소스와 UI 이름은 누구나 볼 수 있으므로 화면 숨김은 보안 경계가 아닙니다. 실제 데이터 접근은 Google Analytics 속성의 읽기 권한으로 제한됩니다.
+로그인 전에는 분석 항목을 숨기고 로그인 안내만 보여 줍니다. Google에서 액세스 토큰을 발급하더라도 속성 요약 조회가 성공해야 화면이 열리고, 권한 오류·연결 해제·토큰 만료 시 다시 숨깁니다. 토큰은 메모리에만 보관합니다. 정적 사이트의 HTML·JavaScript 소스와 UI 이름은 누구나 볼 수 있으므로 화면 숨김은 보안 경계가 아닙니다. 실제 데이터 접근은 Google Analytics 속성의 읽기 권한으로 제한됩니다.
 
 ## 지표 해석
 
@@ -37,6 +37,6 @@ Google 권고는 서버 기반 인증 코드 방식이지만, 이 페이지는 �
 - 보스 승률은 저장된 `boss_result`의 승리/전체 결과이며, 미완료 전투는 포함하지 않습니다. 광고 획득 콜백과 게임 저장 성공은 다릅니다. 데이터 처리 지연, 비활성화된 분석 설정, GA 임계값, 표본 추출, 등록된 측정기준 상태에 따라 일부 항목이 지연되거나 비어 있을 수 있습니다.
 - 각 섹션 실패는 따로 표시합니다. 실제 Analytics 접근 및 데이터 집계와의 비교 검증은 OAuth 설정 후 필요합니다.
 
-## GitHub Pages
+## 호스팅과 소스
 
-기존 게임 저장소는 비공개입니다. 공개 페이지가 필요하면 대시보드 파일만 별도의 공개 저장소에 올립니다. Pages의 브랜치 배포도 GitHub Actions가 실행되므로 프로젝트의 `git-zero-cost` 규칙에 따라 명시적 예외 확인이 필요합니다. [GitHub Pages 동작](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) · [Actions 과금](https://docs.github.com/en/actions/concepts/billing-and-usage)
+소스 저장소는 `rivergameforge-cell/privacy-policy`이며 배포는 `v8redline.studio@gmail.com`이 관리하는 Firebase 프로젝트 `unlimitbossrun-dist`의 `v8redline-studio` Hosting 사이트를 사용합니다. Spark 요금제이며 결제 계정 연결이나 Blaze 업그레이드 없이 정적 파일만 배포합니다. 루트의 `HOSTING.md`를 따릅니다.
