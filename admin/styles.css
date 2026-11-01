@@ -667,3 +667,11 @@ dialog::backdrop {
   font-size: 12px;
   line-height: 1.5;
 }
+
+/* The page shell is public; only show report controls after Analytics authorizes the signed-in user. */
+#private-content[hidden],
+body:not(.analytics-visible) .nav-label,
+body:not(.analytics-visible) .nav-item,
+body:not(.analytics-visible) .side-footer {
+  display: none !important;
+}

@@ -26,6 +26,10 @@ python3 -m http.server 8765 --bind 127.0.0.1
 
 Google 권고는 서버 기반 인증 코드 방식이지만, 이 페이지는 정적 호스팅이라는 요구에 맞춰 Google Identity Services의 브라우저 토큰 방식을 사용합니다. 페이지 코드를 호스팅하는 저장소의 쓰기 권한을 신뢰할 수 있는 사람에게만 부여해야 합니다. [Google 인증 방식](https://developers.google.com/identity/oauth2/web/guides/choose-authorization-model)
 
+## 로그인 전 화면과 데이터 보호
+
+로그인 전에는 분석 항목을 숨기고 로그인 안내만 보여 줍니다. Google에서 액세스 토큰을 발급하더라도 속성 요약 조회가 성공해야 화면이 열리고, 권한 오류·연결 해제·토큰 만료 시 다시 숨깁니다. 토큰은 메모리에만 보관합니다. GitHub Pages의 HTML·JavaScript 소스와 UI 이름은 누구나 볼 수 있으므로 화면 숨김은 보안 경계가 아닙니다. 실제 데이터 접근은 Google Analytics 속성의 읽기 권한으로 제한됩니다.
+
 ## 지표 해석
 
 - 날짜 및 국가 필터는 활성 사용자, 보스 결과, 광고, 퍼널과 행동 분석에 적용합니다. **코호트 재방문은 전체 국가 기준**이며 첫 방문 시점은 35일 전부터 8일 전까지입니다.

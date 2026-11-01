@@ -9,6 +9,7 @@ const state = {
   expiry: 0,
   generation: 0,
   controller: null,
+  expiryTimer: null,
   quality: new Set(),
   config: readConfig(),
 };
@@ -467,8 +468,19 @@ async function refresh() {
     if (generation !== state.generation) return;
     try {
       await fn();
+      if (generation !== state.generation) return;
+      if (name === "요약") {
+        $("private-content").hidden = false;
+        document.body.classList.add("analytics-visible");
+        $("welcome").classList.add("hidden");
+      }
     } catch (e) {
       if (generation !== state.generation) return;
+      if (name === "요약") {
+        disconnect();
+        notify(errorText(e));
+        return;
+      }
       errors.push(name);
       if (name === "퍼널") message("funnel", errorText(e), true);
       else if (name === "광고") message("ads-list", errorText(e), true);
@@ -524,6 +536,14 @@ function connect() {
       state.expiry =
         Date.now() +
         Math.max(0, (Number(response.expires_in) || 0) - 60) * 1000;
+      clearTimeout(state.expiryTimer);
+      state.expiryTimer = setTimeout(
+        () => {
+          disconnect();
+          notify("Google 연결이 만료되었습니다. 다시 연결해 주세요.");
+        },
+        Math.max(0, state.expiry - Date.now()),
+      );
       $("login-btn").classList.add("hidden");
       $("logout-btn").classList.remove("hidden");
       refresh();
@@ -536,6 +556,10 @@ function connect() {
 function disconnect() {
   state.token = null;
   state.expiry = 0;
+  clearTimeout(state.expiryTimer);
+  state.expiryTimer = null;
+  $("private-content").hidden = true;
+  document.body.classList.remove("analytics-visible");
   state.generation++;
   state.controller?.abort();
   state.controller = null;
@@ -600,3 +624,10 @@ $("save-settings").addEventListener("click", (e) => {
 });
 $("client-id").value = state.config.clientId;
 $("property-id").value = state.config.propertyId;
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && state.token && Date.now() >= state.expiry) {
+    disconnect();
+    notify("Google 연결이 만료되었습니다. 다시 연결해 주세요.");
+  }
+});

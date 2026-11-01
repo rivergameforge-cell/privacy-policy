@@ -53,247 +53,255 @@
             </button>
           </div>
         </header>
-        <div class="toolbar">
-          <div class="status">
-            <span id="status-dot" class="status-dot"></span
-            ><span id="status-text">연결 전</span><span class="divider">/</span
-            ><span id="updated">데이터를 불러오지 않았어요</span>
-          </div>
-          <div class="filters">
-            <label
-              >국가
-              <select id="country">
-                <option value="">전체 국가</option>
-                <option value="Brazil" selected>브라질</option>
-                <option value="South Korea">대한민국</option>
-              </select></label
-            ><label
-              >기간
-              <select id="period">
-                <option value="6daysAgo">최근 7일</option>
-                <option value="27daysAgo" selected>최근 28일</option>
-                <option value="89daysAgo">최근 90일</option>
-              </select></label
-            ><button id="refresh-btn" class="btn subtle" disabled>
-              ↻ 새로고침
-            </button>
-          </div>
-        </div>
         <section id="welcome" class="notice">
           <div class="notice-icon">✦</div>
           <div>
-            <b>내 게임 데이터를 연결해 볼까요?</b>
+            <b>Google로 로그인해 주세요</b>
             <p>
-              Google 계정으로 연결하면 접근 권한이 있는 Analytics 데이터를
-              불러옵니다. 연결 전에는 예시 수치를 표시하지 않습니다.
+              Google 계정 연결과 Analytics 속성의 읽기 권한을 확인한 후 분석
+              내용을 보여드립니다.
             </p>
           </div>
           <button id="welcome-connect" class="text-btn">연결하기 →</button>
         </section>
-        <div id="quality-note" class="quality-note hidden" role="status"></div>
-        <section class="stats" aria-label="핵심 지표">
-          <article class="stat">
-            <div class="stat-top">
-              <span>활성 사용자</span><i class="blue">♟</i>
+        <div id="private-content" hidden>
+          <div class="toolbar">
+            <div class="status">
+              <span id="status-dot" class="status-dot"></span
+              ><span id="status-text">연결 전</span
+              ><span class="divider">/</span
+              ><span id="updated">데이터를 불러오지 않았어요</span>
             </div>
-            <strong id="active-users">—</strong
-            ><small>선택 기간에 플레이한 사용자</small>
-          </article>
-          <article class="stat">
-            <div class="stat-top">
-              <span>신규 사용자</span><i class="gold">✦</i>
+            <div class="filters">
+              <label
+                >국가
+                <select id="country">
+                  <option value="">전체 국가</option>
+                  <option value="Brazil" selected>브라질</option>
+                  <option value="South Korea">대한민국</option>
+                </select></label
+              ><label
+                >기간
+                <select id="period">
+                  <option value="6daysAgo">최근 7일</option>
+                  <option value="27daysAgo" selected>최근 28일</option>
+                  <option value="89daysAgo">최근 90일</option>
+                </select></label
+              ><button id="refresh-btn" class="btn subtle" disabled>
+                ↻ 새로고침
+              </button>
             </div>
-            <strong id="new-users">—</strong
-            ><small>선택 기간에 처음 방문</small>
-          </article>
-          <article class="stat">
-            <div class="stat-top">
-              <span>보스 도전</span><i class="red">⚔</i>
-            </div>
-            <strong id="boss-attempts">—</strong><small>도전 이벤트 횟수</small>
-          </article>
-          <article class="stat">
-            <div class="stat-top">
-              <span>광고 보상 획득</span><i class="green">▶</i>
-            </div>
-            <strong id="rewards-earned">—</strong
-            ><small>광고 보상 획득 횟수</small>
-          </article>
-        </section>
-        <div class="grid">
-          <section class="panel wide" id="progress">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">PLAYER JOURNEY</p>
-                <h2>첫 플레이 여정</h2>
-                <p>신규 사용자가 각 단계를 순서대로 통과한 비율입니다.</p>
+          </div>
+          <div
+            id="quality-note"
+            class="quality-note hidden"
+            role="status"
+          ></div>
+          <section class="stats" aria-label="핵심 지표">
+            <article class="stat">
+              <div class="stat-top">
+                <span>활성 사용자</span><i class="blue">♟</i>
               </div>
-              <span class="tag">신규 사용자 기준</span>
-            </div>
-            <div id="funnel" class="placeholder">
-              <span>◈</span>
-              <p>연결 후 단계별 진행을 확인할 수 있어요.</p>
-            </div>
-            <div class="footnote">
-              튜토리얼을 건너뛴 사용자는 다음 단계에 포함되지 않을 수 있습니다.
-              Google의 퍼널 API는 미리보기 단계입니다.
-            </div>
-          </section>
-          <section class="panel narrow" id="ads">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">MONETIZATION</p>
-                <h2>광고 보상 흐름</h2>
-                <p>요청부터 보상 저장까지</p>
+              <strong id="active-users">—</strong
+              ><small>선택 기간에 플레이한 사용자</small>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>신규 사용자</span><i class="gold">✦</i>
               </div>
-              <span class="panel-symbol">▷</span>
-            </div>
-            <div id="ads-list" class="placeholder">
-              <span>◌</span>
-              <p>연결 후 광고 흐름을 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              각 값은 사용자 수가 아닌 이벤트 횟수입니다.
-            </div>
-          </section>
-          <section class="panel wide" id="boss">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">BOSS ENCOUNTERS</p>
-                <h2>보스 도전 현황</h2>
-                <p>지역과 회차별 전투 결과를 확인하세요.</p>
+              <strong id="new-users">—</strong
+              ><small>선택 기간에 처음 방문</small>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>보스 도전</span><i class="red">⚔</i>
               </div>
-              <span class="tag light">일반 · 최종 보스</span>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>지역</th>
-                    <th>회차</th>
-                    <th>종류</th>
-                    <th>전투 결과</th>
-                    <th>승리</th>
-                    <th>승률</th>
-                  </tr>
-                </thead>
-                <tbody id="boss-table">
-                  <tr>
-                    <td colspan="6" class="empty">
-                      연결 후 보스 기록이 표시됩니다.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="footnote">
-              저장된 승패 이벤트 기준입니다. 승률은 승리 횟수 ÷ 저장된 결과
-              횟수이며, 완료되지 않은 전투는 제외합니다.
-            </div>
-          </section>
-          <section class="panel narrow">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">RETENTION</p>
-                <h2>다시 찾아온 플레이어</h2>
-                <p>최근 유입된 사용자 코호트</p>
+              <strong id="boss-attempts">—</strong
+              ><small>도전 이벤트 횟수</small>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>광고 보상 획득</span><i class="green">▶</i>
               </div>
-              <span class="panel-symbol">↗</span>
-            </div>
-            <div id="retention" class="placeholder">
-              <span>◌</span>
-              <p>연결 후 재방문율을 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              8일 전부터 35일 전까지 처음 방문한 사용자를 기준으로 합니다. 전체
-              국가 기준이며 1일·7일 후 활동을 봅니다.
-            </div>
+              <strong id="rewards-earned">—</strong
+              ><small>광고 보상 획득 횟수</small>
+            </article>
           </section>
-          <section class="panel wide">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">DAILY ACTIVITY</p>
-                <h2>일별 플레이</h2>
-                <p>기간별 활성 사용자의 흐름</p>
+          <div class="grid">
+            <section class="panel wide" id="progress">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">PLAYER JOURNEY</p>
+                  <h2>첫 플레이 여정</h2>
+                  <p>신규 사용자가 각 단계를 순서대로 통과한 비율입니다.</p>
+                </div>
+                <span class="tag">신규 사용자 기준</span>
               </div>
-              <span class="tag light">일별 활성 사용자</span>
-            </div>
-            <div id="trend" class="placeholder">
-              <span>▥</span>
-              <p>연결 후 일별 추이를 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              일별 사용자 수는 날짜마다 중복될 수 있어 기간 전체 사용자 수와
-              합계가 다릅니다.
-            </div>
-          </section>
-          <section class="panel narrow">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">AUTO HUNT</p>
-                <h2>자동사냥 중단</h2>
-                <p>멈춘 이유를 살펴보세요.</p>
+              <div id="funnel" class="placeholder">
+                <span>◈</span>
+                <p>연결 후 단계별 진행을 확인할 수 있어요.</p>
               </div>
-              <span class="panel-symbol">Ⅱ</span>
-            </div>
-            <div id="stops" class="placeholder">
-              <span>◌</span>
-              <p>연결 후 중단 사유를 보여드려요.</p>
-            </div>
-            <div class="footnote">중단 사유별 이벤트 횟수입니다.</div>
-          </section>
-          <section class="panel wide">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">LOOT CHOICES</p>
-                <h2>보스 보상 선택</h2>
-                <p>보상 화면에서 장착·판매·보관한 횟수</p>
+              <div class="footnote">
+                튜토리얼을 건너뛴 사용자는 다음 단계에 포함되지 않을 수
+                있습니다. Google의 퍼널 API는 미리보기 단계입니다.
               </div>
-              <span class="tag light">아이템 선택</span>
-            </div>
-            <div id="loot" class="placeholder">
-              <span>◇</span>
-              <p>연결 후 보상 선택을 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              보상 화면에서의 선택이며, 이후 가방에서 다시 처리한 내역과는
-              다릅니다.
-            </div>
-          </section>
-          <section class="panel narrow">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">AD REWARDS</p>
-                <h2>광고 보상 종류</h2>
-                <p>어떤 보상을 선택했을까요?</p>
+            </section>
+            <section class="panel narrow" id="ads">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">MONETIZATION</p>
+                  <h2>광고 보상 흐름</h2>
+                  <p>요청부터 보상 저장까지</p>
+                </div>
+                <span class="panel-symbol">▷</span>
               </div>
-              <span class="panel-symbol">✦</span>
-            </div>
-            <div id="ad-types" class="placeholder">
-              <span>◌</span>
-              <p>연결 후 보상 종류를 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              광고 보상 획득 콜백 기준이며 저장 성공과는 다릅니다.
-            </div>
-          </section>
-          <section class="panel wide">
-            <div class="panel-head">
-              <div>
-                <p class="kicker">PROGRESSION</p>
-                <h2>강화와 회복약</h2>
-                <p>저장에 성공한 강화·구매·사용 횟수</p>
+              <div id="ads-list" class="placeholder">
+                <span>◌</span>
+                <p>연결 후 광고 흐름을 보여드려요.</p>
               </div>
-              <span class="tag light">행동 횟수</span>
-            </div>
-            <div id="economy" class="placeholder">
-              <span>✚</span>
-              <p>연결 후 성장 행동을 보여드려요.</p>
-            </div>
-            <div class="footnote">
-              전투 중 사용 후 나중에 저장되는 회복약은 현재 집계하지 않습니다.
-            </div>
-          </section>
+              <div class="footnote">
+                각 값은 사용자 수가 아닌 이벤트 횟수입니다.
+              </div>
+            </section>
+            <section class="panel wide" id="boss">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">BOSS ENCOUNTERS</p>
+                  <h2>보스 도전 현황</h2>
+                  <p>지역과 회차별 전투 결과를 확인하세요.</p>
+                </div>
+                <span class="tag light">일반 · 최종 보스</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>지역</th>
+                      <th>회차</th>
+                      <th>종류</th>
+                      <th>전투 결과</th>
+                      <th>승리</th>
+                      <th>승률</th>
+                    </tr>
+                  </thead>
+                  <tbody id="boss-table">
+                    <tr>
+                      <td colspan="6" class="empty">
+                        연결 후 보스 기록이 표시됩니다.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="footnote">
+                저장된 승패 이벤트 기준입니다. 승률은 승리 횟수 ÷ 저장된 결과
+                횟수이며, 완료되지 않은 전투는 제외합니다.
+              </div>
+            </section>
+            <section class="panel narrow">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">RETENTION</p>
+                  <h2>다시 찾아온 플레이어</h2>
+                  <p>최근 유입된 사용자 코호트</p>
+                </div>
+                <span class="panel-symbol">↗</span>
+              </div>
+              <div id="retention" class="placeholder">
+                <span>◌</span>
+                <p>연결 후 재방문율을 보여드려요.</p>
+              </div>
+              <div class="footnote">
+                8일 전부터 35일 전까지 처음 방문한 사용자를 기준으로 합니다.
+                전체 국가 기준이며 1일·7일 후 활동을 봅니다.
+              </div>
+            </section>
+            <section class="panel wide">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">DAILY ACTIVITY</p>
+                  <h2>일별 플레이</h2>
+                  <p>기간별 활성 사용자의 흐름</p>
+                </div>
+                <span class="tag light">일별 활성 사용자</span>
+              </div>
+              <div id="trend" class="placeholder">
+                <span>▥</span>
+                <p>연결 후 일별 추이를 보여드려요.</p>
+              </div>
+              <div class="footnote">
+                일별 사용자 수는 날짜마다 중복될 수 있어 기간 전체 사용자 수와
+                합계가 다릅니다.
+              </div>
+            </section>
+            <section class="panel narrow">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">AUTO HUNT</p>
+                  <h2>자동사냥 중단</h2>
+                  <p>멈춘 이유를 살펴보세요.</p>
+                </div>
+                <span class="panel-symbol">Ⅱ</span>
+              </div>
+              <div id="stops" class="placeholder">
+                <span>◌</span>
+                <p>연결 후 중단 사유를 보여드려요.</p>
+              </div>
+              <div class="footnote">중단 사유별 이벤트 횟수입니다.</div>
+            </section>
+            <section class="panel wide">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">LOOT CHOICES</p>
+                  <h2>보스 보상 선택</h2>
+                  <p>보상 화면에서 장착·판매·보관한 횟수</p>
+                </div>
+                <span class="tag light">아이템 선택</span>
+              </div>
+              <div id="loot" class="placeholder">
+                <span>◇</span>
+                <p>연결 후 보상 선택을 보여드려요.</p>
+              </div>
+              <div class="footnote">
+                보상 화면에서의 선택이며, 이후 가방에서 다시 처리한 내역과는
+                다릅니다.
+              </div>
+            </section>
+            <section class="panel narrow">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">AD REWARDS</p>
+                  <h2>광고 보상 종류</h2>
+                  <p>어떤 보상을 선택했을까요?</p>
+                </div>
+                <span class="panel-symbol">✦</span>
+              </div>
+              <div id="ad-types" class="placeholder">
+                <span>◌</span>
+                <p>연결 후 보상 종류를 보여드려요.</p>
+              </div>
+              <div class="footnote">
+                광고 보상 획득 콜백 기준이며 저장 성공과는 다릅니다.
+              </div>
+            </section>
+            <section class="panel wide">
+              <div class="panel-head">
+                <div>
+                  <p class="kicker">PROGRESSION</p>
+                  <h2>강화와 회복약</h2>
+                  <p>저장에 성공한 강화·구매·사용 횟수</p>
+                </div>
+                <span class="tag light">행동 횟수</span>
+              </div>
+              <div id="economy" class="placeholder">
+                <span>✚</span>
+                <p>연결 후 성장 행동을 보여드려요.</p>
+              </div>
+              <div class="footnote">
+                전투 중 사용 후 나중에 저장되는 회복약은 현재 집계하지 않습니다.
+              </div>
+            </section>
+          </div>
         </div>
         <footer>
           또 보스냐! <span>·</span> 플레이 리포트 <span>·</span> 데이터는 Google
