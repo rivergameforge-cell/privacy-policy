@@ -5,7 +5,7 @@ import shutil
 root = Path(__file__).resolve().parents[1]
 out = root / ".hosting-public"
 files = sorted(root.glob("*.html")) + [root / "underspark-gacha-odds.json", root / "app-ads.txt"]
-files += [root / "admin" / name for name in ("index.html", "app.js", "styles.css", "privacy.html")]
+files += [root / "admin" / name for name in ("index.html", "app.js", "styles.css", "privacy.html", "attribution.js")]
 allowed = {p.relative_to(root) for p in files}
 if out.is_symlink():
     raise SystemExit("Output must not be a symlink")

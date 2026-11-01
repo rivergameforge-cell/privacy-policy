@@ -2,6 +2,7 @@
 // All report data and the access token remain in memory. No game or user IDs are stored.
 const DEFAULT_CLIENT_ID = "755808518263-cbhrcuhubp42g1s71i1dgm7kr1aav27c.apps.googleusercontent.com";
 const SCOPE = "https://www.googleapis.com/auth/analytics.readonly";
+const Attribution = window.UBRAttribution;
 const ENDPOINT = "https://analyticsdata.googleapis.com";
 const number = new Intl.NumberFormat("ko-KR");
 const $ = (id) => document.getElementById(id);
@@ -128,16 +129,15 @@ function setLoading() {
   td.colSpan = 6;
   tr.append(td);
   table.append(tr);
+  acquisitionMessage("데이터를 불러오는 중입니다.");
 }
-function countryFilter() {
-  return $("country").value
-    ? {
-        filter: {
-          fieldName: "country",
-          stringFilter: { matchType: "EXACT", value: $("country").value },
-        },
-      }
-    : undefined;
+function reportFilter() {
+  return Attribution.audienceFilter({
+    country: $("country").value,
+    meta: $("acquisition").value === "meta",
+    campaign: $("campaign").value,
+    ad: $("ad").value,
+  });
 }
 function eventFilter(names) {
   return {
@@ -163,6 +163,8 @@ function requestBody(dimensions, metrics, filters) {
   return body;
 }
 async function api(method, body, version = "v1beta") {
+  const generation = state.generation;
+  const controller = state.controller;
   const response = await fetch(
     `${ENDPOINT}/${version}/properties/${state.config.propertyId}:${method}`,
     {
@@ -172,7 +174,7 @@ async function api(method, body, version = "v1beta") {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-      signal: state.controller?.signal,
+      signal: controller?.signal,
       cache: "no-store",
       referrerPolicy: "no-referrer",
     },
@@ -181,6 +183,9 @@ async function api(method, body, version = "v1beta") {
   try {
     data = await response.json();
   } catch {}
+  if (generation !== state.generation || controller?.signal.aborted || !state.token) {
+    throw new DOMException("조회가 취소되었습니다.", "AbortError");
+  }
   if (!response.ok) {
     const e = new Error(data.error?.message || "Request failed");
     e.status = response.status;
@@ -258,10 +263,56 @@ function showTableMessage(text) {
   row.append(cell);
   table.append(row);
 }
+function acquisitionMessage(text) {
+  const table = $("acquisition-table");
+  clearNode(table);
+  const row = elem("tr"), cell = elem("td", text, "empty");
+  cell.colSpan = 10;
+  row.append(cell);
+  table.append(row);
+}
+function options(id, values, label) {
+  const selected = $(id).value;
+  clearNode($(id));
+  const all = elem("option", label);
+  all.value = "";
+  $(id).append(all);
+  const choices = new Set(values);
+  if (selected) choices.add(selected);
+  for (const value of [...choices].sort()) {
+    const option = elem("option", value === "(not set)" ? "미확인 ID" : value);
+    option.value = value;
+    $(id).append(option);
+  }
+  $(id).value = selected;
+}
+async function loadAcquisition() {
+  const generation = state.generation;
+  const data = await api("runReport", Attribution.acquisitionBody({
+    period: $("period").value, country: $("country").value, timeZone: state.reportTimeZone,
+  }));
+  if (generation !== state.generation || !state.token) return;
+  const all = Attribution.aggregate(data);
+  options("campaign", all.map(row => row.ids[1]), "전체 캠페인");
+  options("ad", all.filter(row => !$("campaign").value || row.ids[1] === $("campaign").value).map(row => row.ids[3]), "전체 광고");
+  const selected = all.filter(row => (!$("campaign").value || row.ids[1] === $("campaign").value) && (!$("ad").value || row.ids[3] === $("ad").value));
+  if (!selected.length) {
+    acquisitionMessage("선택한 기간에 확인된 메타 광고 유입이 없습니다. 연결 전·귀속 미확인·실제 유입 없음은 이 화면만으로 구분할 수 없습니다.");
+    return;
+  }
+  clearNode($("acquisition-table"));
+  for (const item of selected) {
+    const tr = elem("tr");
+    for (const value of [...item.ids.map(id => !id || id === "(not set)" ? "미확인" : id), ...Attribution.EVENTS.map(event => number.format(item.counts[event]))]) {
+      tr.append(elem("td", value));
+    }
+    $("acquisition-table").append(tr);
+  }
+}
 async function loadSummary() {
   const d = await api(
     "runReport",
-    requestBody([], ["activeUsers", "newUsers"], countryFilter()),
+    requestBody([], ["activeUsers", "newUsers"], reportFilter()),
   );
   state.reportTimeZone = d.metadata?.timeZone || "UTC";
   const r = rows(d);
@@ -282,7 +333,7 @@ async function loadEvents() {
     requestBody(
       ["eventName"],
       ["eventCount"],
-      combine(countryFilter(), eventFilter(names)),
+      combine(reportFilter(), eventFilter(names)),
     ),
   );
   const r = rows(d),
@@ -317,7 +368,7 @@ async function loadFunnel() {
       })),
     },
   };
-  const country = countryFilter();
+  const country = reportFilter();
   if (country) body.dimensionFilter = country;
   const data = await api("runFunnelReport", body, "v1alpha");
   const r = rows(data.funnelVisualization || {});
@@ -337,7 +388,7 @@ async function loadBoss() {
     requestBody(
       ["customEvent:area", "customEvent:cycle", "customEvent:event_context"],
       ["eventCount", "customEvent:amount"],
-      combine(countryFilter(), eventFilter(["boss_result"])),
+      combine(reportFilter(), eventFilter(["boss_result"])),
     ),
   );
   const r = rows(d);
@@ -369,7 +420,7 @@ async function loadStops() {
     requestBody(
       ["customEvent:event_context"],
       ["eventCount"],
-      combine(countryFilter(), eventFilter(["auto_stopped"])),
+      combine(reportFilter(), eventFilter(["auto_stopped"])),
     ),
   );
   renderBars(
@@ -383,7 +434,7 @@ async function loadCategorized(id, eventName) {
     requestBody(
       ["customEvent:event_context"],
       ["eventCount"],
-      combine(countryFilter(), eventFilter([eventName])),
+      combine(reportFilter(), eventFilter([eventName])),
     ),
   );
   renderBars(
@@ -392,7 +443,7 @@ async function loadCategorized(id, eventName) {
   );
 }
 async function loadTrend() {
-  const body = requestBody(["date"], ["activeUsers"], countryFilter());
+  const body = requestBody(["date"], ["activeUsers"], reportFilter());
   body.orderBys = [{ dimension: { dimensionName: "date" } }];
   const d = await api("runReport", body);
   const r = rows(d);
@@ -466,6 +517,7 @@ async function refresh() {
   $("refresh-btn").disabled = true;
   const tasks = [
     ["요약", loadSummary],
+    ["광고별 유입", loadAcquisition],
     ["광고", loadEvents],
     ["퍼널", loadFunnel],
     ["보스", loadBoss],
@@ -495,7 +547,8 @@ async function refresh() {
         return;
       }
       errors.push(name);
-      if (name === "퍼널") message("funnel", errorText(e), true);
+      if (name === "광고별 유입") acquisitionMessage(errorText(e));
+      else if (name === "퍼널") message("funnel", errorText(e), true);
       else if (name === "광고") message("ads-list", errorText(e), true);
       else if (name === "보스") showTableMessage(errorText(e));
       else if (name === "중단 사유") message("stops", errorText(e), true);
@@ -604,6 +657,12 @@ function disconnect() {
   ])
     message(id, "연결 후 데이터를 확인할 수 있어요.");
   showTableMessage("연결 후 보스 기록이 표시됩니다.");
+  acquisitionMessage("연결 후 광고별 기록이 표시됩니다.");
+  for (const id of ["campaign", "ad"]) {
+    $(id).value = "";
+    options(id, [], id === "campaign" ? "전체 캠페인" : "전체 광고");
+  }
+  $("acquisition").value = "";
 }
 $("settings-btn").addEventListener("click", () => {
   $("client-id").value = state.config.clientId;
@@ -614,8 +673,14 @@ $("login-btn").addEventListener("click", connect);
 $("welcome-connect").addEventListener("click", connect);
 $("logout-btn").addEventListener("click", disconnect);
 $("refresh-btn").addEventListener("click", refresh);
-for (const id of ["period", "country"])
+for (const id of ["period", "country", "acquisition", "campaign", "ad"])
   $(id).addEventListener("change", () => {
+    if (id === "acquisition" && !$(id).value) {
+      $("campaign").value = "";
+      $("ad").value = "";
+    }
+    if (id === "campaign") $("ad").value = "";
+    if ((id === "campaign" || id === "ad") && $(id).value) $("acquisition").value = "meta";
     if (state.token) refresh();
   });
 $("save-settings").addEventListener("click", (e) => {
@@ -643,5 +708,15 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden && state.token && Date.now() >= state.expiry) {
     disconnect();
     notify("Google 연결이 만료되었습니다. 다시 연결해 주세요.");
+  }
+});
+
+$("build-link").addEventListener("click", () => {
+  try {
+    $("play-link").value = Attribution.playUrl($("link-campaign").value.trim(), $("link-adset").value.trim(), $("link-ad").value.trim());
+    $("link-message").textContent = "링크를 만들었습니다. 메타 광고 설정과 신규 설치 귀속 검증이 별도로 필요합니다.";
+  } catch (e) {
+    $("play-link").value = "";
+    $("link-message").textContent = e.message;
   }
 });

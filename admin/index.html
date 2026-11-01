@@ -11,6 +11,7 @@
     <title>또 보스냐! · 플레이 리포트</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="https://accounts.google.com/gsi/client"></script>
+    <script defer src="attribution.js"></script>
     <script defer src="app.js"></script>
   </head>
   <body>
@@ -22,6 +23,7 @@
         </div>
         <p class="nav-label">WORKSPACE</p>
         <a class="nav-item selected" href="#overview"><span>▦</span> 대시보드</a
+        ><a class="nav-item" href="#acquisition-report"><span>↗</span> 광고별 유입</a
         ><a class="nav-item" href="#progress"><span>◈</span> 게임 진행</a
         ><a class="nav-item" href="#ads"><span>▷</span> 광고와 보상</a
         ><a class="nav-item" href="#boss"><span>⚔</span> 보스 분석</a>
@@ -73,6 +75,9 @@
               ><span id="updated">데이터를 불러오지 않았어요</span>
             </div>
             <div class="filters">
+              <label>유입 <select id="acquisition"><option value="">전체 유입</option><option value="meta">메타 유료 유입</option></select></label>
+              <label>캠페인 <select id="campaign"><option value="">전체 캠페인</option></select></label>
+              <label>광고 <select id="ad"><option value="">전체 광고</option></select></label>
               <label
                 >국가
                 <select id="country">
@@ -126,6 +131,13 @@
               <strong id="rewards-earned">—</strong
               ><small>광고 보상 획득 횟수</small>
             </article>
+          </section>
+          <section class="panel acquisition-panel" id="acquisition-report">
+            <div class="panel-head"><div><p class="kicker">META ACQUISITION</p><h2>광고별 설치와 게임 진행</h2><p>선택 기간에 처음 유입된 사용자를 광고별로 비교합니다.</p></div><span class="pill">사용자 수</span></div>
+            <p class="acquisition-state">Meta 앱 등록·광고 계정 연결은 완료했으며, 앱 이벤트 수신과 실제 광고 클릭 후 설치 귀속은 아직 검증 전입니다. 아래 표는 추적 매개변수로 Google Analytics에 확인된 메타 유료 유입만 표시합니다.</p>
+            <div class="table-wrap"><table class="acquisition-table"><thead><tr><th>기록된 출처</th><th>캠페인 ID</th><th>광고 세트 ID</th><th>광고 ID</th><th>설치 후 첫 실행</th><th>게임 진입</th><th>튜토리얼 완료</th><th>보스 도전</th><th>보스 처치</th><th>광고 보상 획득</th></tr></thead><tbody id="acquisition-table"><tr><td colspan="10" class="empty">연결 후 광고별 기록이 표시됩니다.</td></tr></tbody></table></div>
+            <p class="panel-note">다운로드 후 실행하지 않은 설치는 집계되지 않습니다. 각 행동은 사용자 수이며 순차 도달률이 아닙니다. 캠페인이나 광고 ID가 없는 기록은 미확인으로 표시합니다. 메타 광고 관리자의 설치 수와는 집계 기준이 다릅니다.</p>
+            <details class="campaign-builder"><summary>광고 연결용 Google Play 링크 만들기</summary><p>메타에서 확인한 숫자 ID를 입력하세요. 광고 유형이 이 링크를 지원하는지 확인하고 신규 설치 경로를 검증한 뒤 사용하세요.</p><div class="filters"><label>캠페인 ID<input id="link-campaign" inputmode="numeric" maxlength="32"></label><label>광고 세트 ID<input id="link-adset" inputmode="numeric" maxlength="32"></label><label>광고 ID<input id="link-ad" inputmode="numeric" maxlength="32"></label><button id="build-link" class="btn subtle">링크 만들기</button></div><label class="field">생성된 설치 링크<textarea id="play-link" readonly rows="3"></textarea></label><p id="link-message" role="status"></p></details>
           </section>
           <div class="grid">
             <section class="panel wide" id="progress">
@@ -213,7 +225,7 @@
               </div>
               <div class="footnote">
                 8일 전부터 35일 전까지 처음 방문한 사용자를 기준으로 합니다.
-                전체 국가 기준이며 1일·7일 후 활동을 봅니다.
+                전체 유입·전체 국가 기준이며 광고 필터를 적용하지 않고 1일·7일 후 활동을 봅니다.
               </div>
             </section>
             <section class="panel wide">
